@@ -38,7 +38,7 @@ public class Main {
         Thread[] regularCustomerThreads = new Thread[regularCustomers];
         for (int i = 0; i < regularCustomers; i++) {
             regularCustomerThreads[i] = new Thread(new Customer(ticketPool, config.getRetrievalRate(), config.getTotalTickets(), false));
-            regularCustomerThreads[i].setName("Customer-" + i);
+              regularCustomerThreads[i].setName("Customer-" + i);
             regularCustomerThreads[i].start();
         }
 
