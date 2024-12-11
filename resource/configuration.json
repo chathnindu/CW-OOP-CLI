@@ -1,8 +1,9 @@
 {
-  "totalTickets": 1000,
-  "releaseRate": 1,
-  "retrievalRate": 1,
-  "maximumTicketCapacity": 100,
-  "numberOfVendors": 100,
-  "numberOfCustomers": 200
+  "totalTickets": 10,
+  "releaseRate": 2,
+  "retrievalRate": 3,
+  "maximumTicketCapacity": 2,
+  "numberOfVendors": 2,
+  "numberOfCustomers": 4,
+  "numberOfVipCustomers": 2
 }

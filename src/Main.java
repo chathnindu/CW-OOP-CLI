@@ -4,73 +4,70 @@ import logging.Logger;
 import threads.Customer;
 import threads.Vendor;
 import ui.CommandLineInterface;
+
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        // Initialize the system configuration from the command-line interface
         Configuration config = CommandLineInterface.initializeFromCLI();
-
-        // Create a ticket pool with the specified maximum capacity
         TicketPool ticketPool = new TicketPool(config.getMaximumTicketCapacity());
 
-        // Clear log file at the start of the session
-        Logger.clearLogFile();
+        Logger.clearLogFile(); // Clear logs
+        Logger.log("System initialized with configuration: " + config);
 
-        // Create Vendor Threads
+        // Vendor threads
         Thread[] vendorThreads = new Thread[config.getNumberOfVendors()];
         for (int i = 0; i < config.getNumberOfVendors(); i++) {
             vendorThreads[i] = new Thread(new Vendor(ticketPool, config.getReleaseRate(), config.getTotalTickets()));
-            vendorThreads[i].setName("Vendor-" + i); // Set the name of the vendor thread
-            vendorThreads[i].start(); // Start the vendor thread
+            vendorThreads[i].setName("Vendor-" + i);
+            vendorThreads[i].start();
         }
 
-        // Create Customer Threads
-        Thread[] customerThreads = new Thread[config.getNumberOfCustomers()];
-        for (int i = 0; i < config.getNumberOfCustomers(); i++) {
-            customerThreads[i] = new Thread(new Customer(ticketPool, config.getRetrievalRate(), config.getTotalTickets()));
-            customerThreads[i].setName("Customer-" + i); // Set the name of the customer thread
-            customerThreads[i].start(); // Start the customer thread
+        // VIP Customer threads
+        int vipCustomers = config.getNumberOfVipCustomers();
+        Thread[] vipCustomerThreads = new Thread[vipCustomers];
+        for (int i = 0; i < vipCustomers; i++) {
+            vipCustomerThreads[i] = new Thread(new Customer(ticketPool, config.getRetrievalRate(), config.getTotalTickets(), true));
+            vipCustomerThreads[i].setName("VIP Customer-" + i);
+            vipCustomerThreads[i].setPriority(Thread.MAX_PRIORITY);
+            vipCustomerThreads[i].start();
         }
 
-        // Command Listener Thread to listen for the stop command
+        // Regular Customer threads
+        int regularCustomers = config.getNumberOfCustomers() - vipCustomers;
+        Thread[] regularCustomerThreads = new Thread[regularCustomers];
+        for (int i = 0; i < regularCustomers; i++) {
+            regularCustomerThreads[i] = new Thread(new Customer(ticketPool, config.getRetrievalRate(), config.getTotalTickets(), false));
+            regularCustomerThreads[i].setName("Customer-" + i);
+            regularCustomerThreads[i].start();
+        }
+
+        // Command Listener
         Thread commandListener = new Thread(() -> {
             Scanner scanner = new Scanner(System.in);
             while (true) {
-                String command = scanner.nextLine().trim(); // Read the user input
-                if (command.equalsIgnoreCase("stop")) {
-                    ticketPool.setStopFlag(true); // Set stop flag to stop all threads
-                    System.out.println("Stop command received. Shutting down...");
-
-                    // Interrupt all vendor and customer threads to wake them up
-                    for (Thread vendor : vendorThreads) {
-                        vendor.interrupt();
-                    }
-                    for (Thread customer : customerThreads) {
-                        customer.interrupt();
-                    }
-                    break; // Exit the loop after the stop command
+                String command = scanner.nextLine().trim();
+                if ("stop".equalsIgnoreCase(command)) {
+                    ticketPool.setStopFlag(true);
+                    Logger.log("Stop command received. Shutting down...");
+                    for (Thread thread : vendorThreads) thread.interrupt();
+                    for (Thread thread : vipCustomerThreads) thread.interrupt();
+                    for (Thread thread : regularCustomerThreads) thread.interrupt();
+                    break;
                 }
             }
         });
-        commandListener.start(); // Start the command listener thread
+        commandListener.start();
 
-        // Wait for all vendor threads to finish
-        for (Thread vendor : vendorThreads) {
-            vendor.join();
-        }
-
-        // Wait for all customer threads to finish
-        for (Thread customer : customerThreads) {
-            customer.join();
-        }
-
-        // Wait for the command listener thread to finish
+        for (Thread thread : vendorThreads) thread.join();
+        for (Thread thread : vipCustomerThreads) thread.join();
+        for (Thread thread : regularCustomerThreads) thread.join();
         commandListener.join();
 
-        // Print message after all threads have terminated
-        System.out.println("All threads terminated. Exiting application.");
+        Logger.log("System terminated.");
     }
 }
+
+
 
 

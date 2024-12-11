@@ -5,41 +5,46 @@ import core.TicketPool;
 import logging.Logger;
 
 public class Customer extends AbstractTicketHandler implements Runnable {
-    // Rate at which the customer retrieves tickets (in seconds)
-    private int retrievalRate;
+    private int retrievalRate; // Time delay between ticket retrievals
+    private int totalTickets; // Total tickets to retrieve
+    private boolean isVip;    // Flag to indicate if the customer is a VIP
 
-    // Total number of tickets the customer will retrieve
-    private int totalTickets;
-
-    // Constructor to initialize the customer with ticket pool, retrieval rate, and total tickets
-    public Customer(TicketPool ticketPool, int retrievalRate, int totalTickets) {
-        super(ticketPool);  // Call the parent class constructor to set ticket pool
+    // Constructor
+    public Customer(TicketPool ticketPool, int retrievalRate, int totalTickets, boolean isVip) {
+        super(ticketPool);
         this.retrievalRate = retrievalRate;
         this.totalTickets = totalTickets;
+        this.isVip = isVip;
     }
 
-    // Implements the ticketHandler method from AbstractTicketHandler, which runs the customer thread
     @Override
     protected void ticketHandler() {
         run();
     }
 
-    // Runs the customer thread that retrieves tickets from the pool at a specified rate
     @Override
-    public synchronized void run() {
+    public void run() {
         while (!ticketPool.shouldStop() && ticketPool.getSoldTicketCount() < totalTickets) {
-            ticketPool.removeTicket();  // Retrieve a ticket from the pool
+            synchronized (ticketPool) {
+                ticketPool.removeTicket(); // Purchased a ticket
+            }
+            Logger.log(Thread.currentThread().getName() + " purchased a ticket.");
 
+            // Exit after one round if the customer is VIP
+            if (isVip) {
+                Logger.log(Thread.currentThread().getName() + " is a VIP and has stopped after one ticket.");
+                break;
+            }
+
+            // Regular customers wait for the retrieval rate before the next round
             try {
-                // Sleep for the retrieval rate time before retrieving the next ticket
                 Thread.sleep(retrievalRate * 1000);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt(); // Restore interrupted status
-                break; // Exit the loop if the thread is interrupted
+                break;
             }
         }
-        // Log when the customer thread stops
-        Logger.log(Thread.currentThread().getName() + " stopped.");
     }
 }
+
 

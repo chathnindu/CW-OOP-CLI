@@ -1,39 +1,30 @@
 package config;
 
 public class Configuration {
-    // Total number of tickets in the system
-    private int totalTickets;
+    private int totalTickets;             // Total number of tickets
+    private int releaseRate;              // Ticket release rate in seconds
+    private int retrievalRate;            // Customer ticket retrieval rate in seconds
+    private int maximumTicketCapacity;    // Maximum ticket pool capacity
+    private int numberOfVendors;          // Number of vendors
+    private int numberOfCustomers;        // Number of customers
+    private int numberOfVipCustomers;     // Number of VIP customers
 
-    // Rate at which tickets are released (in seconds)
-    private int releaseRate;
-
-    // Rate at which customers retrieve tickets (in seconds)
-    private int retrievalRate;
-
-    // Maximum capacity of the ticket pool
-    private int maximumTicketCapacity;
-
-    // Number of vendors in the system
-    private int numberOfVendors;
-
-    // Number of customers in the system
-    private int numberOfCustomers;
-
-    // Constructor to initialize all fields
+    // Constructor
     public Configuration(int totalTickets, int releaseRate, int retrievalRate,
-                         int maximumTicketCapacity, int numberOfVendors, int numberOfCustomers) {
+                         int maximumTicketCapacity, int numberOfVendors, int numberOfCustomers, int numberOfVipCustomers) {
         this.totalTickets = totalTickets;
         this.releaseRate = releaseRate;
         this.retrievalRate = retrievalRate;
         this.maximumTicketCapacity = maximumTicketCapacity;
         this.numberOfVendors = numberOfVendors;
         this.numberOfCustomers = numberOfCustomers;
+        this.numberOfVipCustomers = numberOfVipCustomers;
     }
 
-    // Default constructor for deserialization
+    // Default constructor
     public Configuration() {}
 
-    // Converts the configuration object to a string representation
+    // String representation of configuration
     @Override
     public String toString() {
         return "Configuration {" +
@@ -43,10 +34,11 @@ public class Configuration {
                 ", maximumTicketCapacity=" + maximumTicketCapacity +
                 ", numberOfVendors=" + numberOfVendors +
                 ", numberOfCustomers=" + numberOfCustomers +
+                ", numberOfVipCustomers=" + numberOfVipCustomers +
                 '}';
     }
 
-    // Getters and setters for all fields
+    // Getters and setters
     public int getTotalTickets() {
         return totalTickets;
     }
@@ -94,4 +86,13 @@ public class Configuration {
     public void setNumberOfCustomers(int numberOfCustomers) {
         this.numberOfCustomers = numberOfCustomers;
     }
+
+    public int getNumberOfVipCustomers() {
+        return numberOfVipCustomers;
+    }
+
+    public void setNumberOfVipCustomers(int numberOfVipCustomers) {
+        this.numberOfVipCustomers = numberOfVipCustomers;
+    }
 }
+

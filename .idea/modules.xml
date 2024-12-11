@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/NEW OOP CW.iml" filepath="$PROJECT_DIR$/NEW OOP CW.iml" />
+      <module fileurl="file://$PROJECT_DIR$/OOP-CW-CLI.iml" filepath="$PROJECT_DIR$/OOP-CW-CLI.iml" />
     </modules>
   </component>
 </project>
