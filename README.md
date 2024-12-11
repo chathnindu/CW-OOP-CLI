@@ -92,7 +92,6 @@ Refer to the test cases documented in the `Test Cases` section. These include:
 - Graceful shutdown and thread management.
 - Performance under high concurrency.
 
-## Contribution
-Contributions are welcome! Fork the repository and submit a pull request with your improvements or feature additions.
-
+## License
+This project is a coursework submission and should not be redistributed or used for commercial purposes without prior permission. Contact the author for any inquiries.
 
