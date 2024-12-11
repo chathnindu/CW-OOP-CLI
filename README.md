@@ -13,32 +13,46 @@ This Ticketing System is a multithreaded application designed to manage ticket s
 
 ## Architecture
 
+### Interfaces
+1. **`TicketOperation`**:
+   - Defines methods for adding and removing tickets from the pool.
+   - Ensures operations are synchronized and may handle interruptions.
+
 ### Classes
 1. **`Main`**:
-    - Entry point of the application.
-    - Manages thread creation and system shutdown.
+   - Entry point of the application.
+   - Manages thread creation and system shutdown.
 
 2. **`Configuration`**:
-    - Holds system configuration details (e.g., total tickets, release rates).
-    - Provides getter and setter methods.
+   - Holds system configuration details (e.g., total tickets, release rates).
+   - Provides getter and setter methods.
 
 3. **`CommandLineInterface`**:
-    - Handles user input for system configuration.
-    - Supports loading and saving configurations in JSON format.
+   - Handles user input for system configuration.
+   - Supports loading and saving configurations in JSON format.
+
+4. **`AbstractTicketHandler`**:
+   - Abstract class providing a base for ticket handling operations.
+   - Contains a shared `TicketPool` resource and an abstract `ticketHandler` method for subclasses to implement.
 
 4. **`TicketPool`**:
-    - Shared resource for tickets between vendors and customers.
-    - Manages ticket addition, retrieval, and synchronization.
+   - Shared resource for tickets between vendors and customers.
+   - Manages ticket addition, retrieval, and synchronization.
+   - Implements the `TicketOperation` interface for adding and removing tickets.
 
 5. **`Vendor`**:
-    - Vendor threads add tickets to the `TicketPool` at a configurable rate.
+   - Vendor threads add tickets to the `TicketPool` at a configurable rate.
 
 6. **`Customer`**:
-    - Customer threads retrieve tickets from the `TicketPool` at a configurable rate.
+   - Customer threads retrieve tickets from the `TicketPool` at a configurable rate.
 
-7. **`Logger`**:
-    - Handles logging of system operations to a file with timestamps.
-    - Supports clearing logs at the start of a session.
+7. **`Ticket`**:
+   - Represents a ticket with a unique ID and the vendor ID of the issuer.
+   - Includes methods to retrieve the ticket ID and the vendor ID.
+
+8. **`Logger`**:
+   - Handles logging of system operations to a file with timestamps.
+   - Supports clearing logs at the start of a session.
 
 ## Setup Instructions
 
@@ -63,12 +77,12 @@ This Ticketing System is a multithreaded application designed to manage ticket s
 ### Configuring the System
 1. Launch the application.
 2. Enter the required configuration details when prompted:
-    - Total number of tickets.
-    - Ticket release rate (seconds).
-    - Ticket retrieval rate (seconds).
-    - Maximum ticket pool capacity.
-    - Number of vendors.
-    - Number of customers.
+   - Total number of tickets.
+   - Ticket release rate (seconds).
+   - Ticket retrieval rate (seconds).
+   - Maximum ticket pool capacity.
+   - Number of vendors.
+   - Number of customers.
 3. The system will save the configuration for future use.
 
 ### Commands
@@ -93,5 +107,5 @@ Refer to the test cases documented in the `Test Cases` section. These include:
 - Performance under high concurrency.
 
 ## License
-This project is a coursework submission and should not be redistributed or used for commercial purposes without prior permission. Contact the author for any inquiries.
+This project is a coursework submission and should not be redistributed or used for commercial purposes without prior permission. Contact the course instructor or author for any inquiries.
 
